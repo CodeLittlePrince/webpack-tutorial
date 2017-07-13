@@ -41,6 +41,13 @@ if (DEVELOPMENT) {
 
 module.exports = {
     devtool: devtool,
+    resolve: {
+        alias: {
+            js: path.resolve(__dirname, 'src/js/'),
+            scss: path.resolve(__dirname, 'src/scss/'),
+            img: path.resolve(__dirname, 'src/img/')
+        }
+    },
 	entry: {
         index: './src/js/index',
         page1: './src/js/page1',

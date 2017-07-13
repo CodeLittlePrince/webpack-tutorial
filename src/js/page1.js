@@ -1,6 +1,6 @@
-import '../scss/base.scss';
-import '../scss/page1.scss';
-import img from '../img/page1.jpg';
+import 'scss/base.scss';
+import 'scss/page1.scss';
+import img from 'img/page1.jpg';
 import {hi, hello} from './message';
 let app = document.getElementById('app');
 app.innerText = hello;

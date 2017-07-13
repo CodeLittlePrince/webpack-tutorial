@@ -1,6 +1,6 @@
-import '../scss/base.scss';
-import '../scss/index.scss';
-import img from '../img/index.jpg';
+import 'scss/base.scss';
+import 'scss/index.scss';
+import img from 'img/index.jpg';
 import {hi, hello} from './message';
 import $ from 'jQuery';
 let app = $('#app');
