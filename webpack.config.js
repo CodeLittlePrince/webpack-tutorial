@@ -3,19 +3,54 @@ const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const webpack = require('webpack');
+
+const PRODUCTION = process.env.NODE_ENV === 'production',
+      DEVELOPMENT = process.env.NODE_ENV === 'development';
+
+let devtool,                // 设置source-map的类型
+    filename,               // 设置js和css生成的名字
+    outputPath,             // 指定输出的路径
+    pathsToClean,           // 删除指定文件夹的路径
+    imageUse;               // 设置使用的图片工具
+
+if (DEVELOPMENT) {
+    devtool = 'cheap-module-source-map';
+    filename = {
+        js: 'js/[name].js',
+        css: 'css/[name].css',
+    };
+    outputPath = path.resolve(__dirname, 'dev');
+    pathsToClean = [];
+    imageUse = [
+        'url-loader?limit=20000&name=img/[name]-[hash:12].[ext]'
+    ];
+}else{
+    devtool = 'cheap-module-eval-source-map';
+    filename = {
+        js: 'js/[name]-[chunkhash].js',
+        css: 'css/[name]-[chunkhash].css',
+    };
+    outputPath = path.resolve(__dirname, 'dist');
+    pathsToClean = ['dist'];
+    imageUse = [
+        'url-loader?limit=20000&name=img/[name]-[hash:12].[ext]',
+        'image-webpack-loader?{pngquant:{quality: "65-90", speed: 4}, mozjpeg: {quality: 65}}'
+    ];
+}
 
 module.exports = {
-	devtool: 'inline-source-map',
+    devtool: devtool,
 	entry: {
         index: './src/js/index',
         page1: './src/js/page1',
         page2: './src/js/page2'
     },
 	output: {
-		path: path.resolve(__dirname, 'dist'),
+		path: outputPath,
 		// publicPath: '/dist/',
         publicPath: '/',
-		filename: 'js/[name]-[chunkhash].js'
+		filename: filename.js
     },
     externals: [
         'jQuery'
@@ -25,9 +60,22 @@ module.exports = {
         	{
     	        test: /\.scss$/,
     	        use: ExtractTextPlugin.extract({
-    	          fallback: 'style-loader',
-    	          //resolve-url-loader may be chained before sass-loader if necessary
-    	          use: ['css-loader', 'sass-loader']
+    	            fallback: 'style-loader',
+    	            //resolve-url-loader may be chained before sass-loader if necessary
+                    use: [
+                        {
+                            loader: "css-loader",
+                            options: {
+                                sourceMap: true
+                            }
+                        }, 
+                        {
+                            loader: "sass-loader",
+                            options: {
+                                sourceMap: true
+                            }
+                        }
+                    ]
     	        }),
                 exclude: '/node_modules/'
     	    },
@@ -40,17 +88,17 @@ module.exports = {
         	},
         	{
         		test: /\.(png|svg|jpg|gif)$/,
-        		use: [
-        			'url-loader?limit=20000&name=img/[name]-[hash:12].[ext]',
-        			'image-webpack-loader?{pngquant:{quality: "65-90", speed: 4}, mozjpeg: {quality: 65}}'
-        		],
+        		use: imageUse,
         		exclude: '/node_modules/'
         	}
         ]
     },
     plugins: [
-    	new CleanWebpackPlugin(['dist']),
-    	new ExtractTextPlugin('css/[name]-[chunkhash].css'),
+    	new CleanWebpackPlugin(pathsToClean),
+    	new ExtractTextPlugin({
+            filename: filename.css,
+            disable: DEVELOPMENT
+        }),
         new HtmlWebpackPlugin({
             filename: './index.html',
             template: './src/tpl/index.html',
@@ -84,8 +132,9 @@ module.exports = {
     		host: 'localhost',
     		port: 7777,
     		server: {
-    			baseDir: ['./dist']
+    			baseDir: ['./dist', './dev']
     		}
-    	})
+    	}),
+        new webpack.optimize.ModuleConcatenationPlugin()
     ]
 }
