@@ -15,7 +15,7 @@ let devtool,                // 设置source-map的类型
     imageUse;               // 设置使用的图片工具
 
 if (DEVELOPMENT) {
-    devtool = 'cheap-module-source-map';
+    devtool = 'cheap-module-eval-source-map';
     filename = {
         js: 'js/[name].js',
         css: 'css/[name].css',
@@ -26,7 +26,7 @@ if (DEVELOPMENT) {
         'url-loader?limit=20000&name=img/[name]-[hash:12].[ext]'
     ];
 }else{
-    devtool = 'cheap-module-eval-source-map';
+    devtool = 'cheap-module-source-map';
     filename = {
         js: 'js/[name]-[chunkhash].js',
         css: 'css/[name]-[chunkhash].css',
