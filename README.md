@@ -1,4 +1,4 @@
-# webpack教程-骡子窝
+# webpack教程-多页应用-骡子窝
 ### 这是属于骡子窝的webpack教程
 ##### 网址：http://www.luoziwo.cn/post/14
 ##### (因为域名还在备案中，所以可能得访问 http://106.15.196.24/post/14)
